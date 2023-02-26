@@ -1,0 +1,49 @@
+You can use gorest.co.in website for practicing api testing
+api key: 99e9d9701c2653ebffd1a21fbf04dd40fdd9fcbbee3b9aa60fc990b8082855dd
+
+Libraries/Frameworks
+
+SuperTest- HTTP request library
+Mocha BDD Framework (Test Framework)
+Chai JS Assertions (Assertions Librar)
+Mochawesome Reporting Tool
+Jenkins- CI/CD
+
+Requirement:
+Node JS and NPM
+SuperTest
+Mocha
+Chai
+Babel (ES6+)
+
+Installation:
+1. Create a project folder on your pc
+2. Open the folder in visual studio code
+3. Open terminal and type: npm init
+4. After that install other package as mentioned below:
+npm i --save-dev supertest mocha chai @babel/cli @babel/core @babel/node @babel/register @babel/preset-env
+5. Create a .babelrc file and type:
+{
+    "presets": ["@babel/preset-env"]
+}
+6. Create a .mocharc.yaml for registering babel. Type :
+require: '@babel/register'
+
+7. For api testing you can use: gorest.co.in
+8. Create a test folder and inside test folder create a users.js file
+9. Goto package.json and change the test inside the script
+"scripts": {
+    "test": "mocha"
+  }
+
+10. Create a .env file under the project and write your authentication token inside it:
+USER_TOKEN="99e9d9701c2653ebffd1a21fbf04dd40fdd9fcbbee3b9aa60fc990b8082855dd"
+
+11. To access .env file inside your test files, install dotenv library:
+npm i dotenv
+To use that dotenv, open any of your test file and at the top write:
+require('dotenv').config();
+and after that you need to write:
+const TOKEN=process.env.USER_TOKEN;
+
+  

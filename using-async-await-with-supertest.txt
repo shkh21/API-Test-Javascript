@@ -1,0 +1,82 @@
+Using Async/Await with Supertest
+
+1. Install plugin through terminal: npm i @babel/plugin-transform-runtime
+2. Goto .babelrc file and type
+{
+    "presets": ["@babel/preset-env"],
+	"plugins":[
+	["@babel/transform-runtime",{
+	"regenerator":true
+	}]
+	]
+}
+
+3. Create a new file (posts.js) under test folder
+4. Create a helper folder under the project and then create a user_helper.js file under the helper folder.
+5. Then write code to add new user inside user_helper.js
+
+import supertest from "supertest";
+const request = supertest("https://gorest.co.in/public-api/");
+const TOKEN = "99e9d9701c2653ebffd1a21fbf04dd40fdd9fcbbee3b9aa60fc990b8082855dd";
+
+export const createRandomUser = async () => {
+    //Creating user data for sending in request body
+    const user_data = {
+        email: `abzd${Math.floor(Math.random() * 9999)}@gmail.com`,
+        name: 'abyd',
+        gender: 'female',
+        status: 'active'
+    };
+    //Create a new user
+    const res = await request.post('users')
+        .set('Authorization', `Bearer ${TOKEN}`)
+        .send(user_data);
+        console.log(res.body);
+    return res.body.data.id; // Returning the id of user, which can be used in any other methods which require userId.
+};
+
+6. Create a posts.js file under test folder and write:
+
+import supertest from "supertest";
+const request = supertest("https://gorest.co.in/public-api/");
+const TOKEN = "99e9d9701c2653ebffd1a21fbf04dd40fdd9fcbbee3b9aa60fc990b8082855dd";
+
+import { expect } from "chai";
+import { createRandomUser } from "../helper/user_helper";
+
+describe('User posts', () => {
+    let postId, userId;
+
+    before(async() => {
+        //Create a new user, the api test method is written in createRandomUser() method under user_helper.js inside helper folder
+       userId=await createRandomUser(); //passing the id of the user from createRandomUser() and storing it in userId variable
+    });
+
+    it('/posts', async () => {
+        //Creating post data for sending in request body
+        const data = {
+            user_id: userId,
+            title: 'New 23 Feb Post',
+            body: 'Hello 123'
+        };
+        //Create a post for the newly created user
+        const postRes = await request.post('posts')
+            .set('Authorization', `Bearer ${TOKEN}`)
+            .send(data);
+        console.log(postRes.body);
+        expect(postRes.body.data).to.deep.include(data);
+        postId = postRes.body.data.id;
+
+    });
+
+    it('/GET/post/:id', async () => {
+        await request.get(`posts/${postId}`)
+            .set('authorization', `Bearer ${TOKEN}`)
+            .expect(200);
+    });
+});
+
+7. Run the test: npm test 'test/posts.js'
+8. You can also use faker.js external library for generating random data to be used in request body:
+   npm i faker
+9. Then replace the data with faker
